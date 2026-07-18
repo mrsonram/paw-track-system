@@ -90,6 +90,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Admin Notification Address
+    |--------------------------------------------------------------------------
+    |
+    | Where new contact-form submissions get emailed. Falls back to the
+    | global "from" address if not set separately.
+    |
+    */
+
+    'admin_address' => env('MAIL_ADMIN_ADDRESS', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
+
+    /*
+    |--------------------------------------------------------------------------
     | Markdown Mail Settings
     |--------------------------------------------------------------------------
     |

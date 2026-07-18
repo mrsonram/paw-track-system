@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Contact;
+use App\Mail\NewContactMessage;
+use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
@@ -58,6 +60,8 @@ class ContactController extends Controller
         $data->title = $request->input('title');
         $data->message = $request->input('message');
         $data->save();
+
+        Mail::to(config('mail.admin_address'))->send(new NewContactMessage($data));
 
         return redirect('/')->with('success', 'ส่งข้อมูลแล้ว');
     }
