@@ -1,8 +1,8 @@
 {
-    "name": "laravel/laravel",
+    "name": "pawtrack/pawtrack",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "description": "PawTrack — Stray & Community Dog Management System (VRU VET Project).",
+    "keywords": ["laravel", "pawtrack", "dog-management", "veterinary"],
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
