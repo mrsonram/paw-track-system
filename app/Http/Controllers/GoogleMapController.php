@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class GoogleMapController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth')->only(['add', 'store']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -51,14 +56,25 @@ class GoogleMapController extends Controller
      */
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
+        ]);
 
-        GoogleMap::create($request->all());
+        GoogleMap::create($validated);
         return redirect('/map')->with('success', "Add map success!");
     }
 
     public function add(Request $request)
     {
-        GoogleMap::create($request->all());
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
+        ]);
+
+        GoogleMap::create($validated);
         return redirect('/google/add')->with('success', "Add map success!");
     }
 

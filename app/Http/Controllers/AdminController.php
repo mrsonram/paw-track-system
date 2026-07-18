@@ -64,11 +64,27 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        $requestData = $request->all();
-        if ($request->hasFile('image')) {
-            $requestData['image'] = $request->file('image')
-                ->store('images', 'public');
-        }
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'species' => 'required|string|max:255',
+            'marking' => 'required|string|max:255',
+            'gender' => 'required|string|max:255',
+            'collar' => 'required|string|max:255',
+            'age' => 'required|string|max:255',
+            'status' => 'required|string|max:255',
+            'vet' => 'required|string|max:255',
+            'owner' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'lat' => 'nullable|string|max:255',
+            'lng' => 'nullable|string|max:255',
+            'image' => 'required|image|max:2048',
+        ]);
+
+        $requestData = $request->only([
+            'name', 'species', 'marking', 'gender', 'collar', 'age',
+            'status', 'vet', 'owner', 'location', 'lat', 'lng',
+        ]);
+        $requestData['image'] = $request->file('image')->store('images', 'public');
 
         Admin::create($requestData);
 
@@ -110,10 +126,29 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $requestData = $request->all();
-                if ($request->hasFile('image')) {
-            $requestData['image'] = $request->file('image')
-                ->store('images', 'public');
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'species' => 'required|string|max:255',
+            'marking' => 'required|string|max:255',
+            'gender' => 'required|string|max:255',
+            'collar' => 'required|string|max:255',
+            'age' => 'required|string|max:255',
+            'status' => 'required|string|max:255',
+            'vet' => 'required|string|max:255',
+            'owner' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'lat' => 'nullable|string|max:255',
+            'lng' => 'nullable|string|max:255',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        $requestData = $request->only([
+            'name', 'species', 'marking', 'gender', 'collar', 'age',
+            'status', 'vet', 'owner', 'location', 'lat', 'lng',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $requestData['image'] = $request->file('image')->store('images', 'public');
         }
 
         $animals = Admin::findOrFail($id);

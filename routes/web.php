@@ -52,11 +52,13 @@ Route::resource('contact', 'ContactController');
 Route::resource('message', 'NewsController');
 
 //Google Map
-Route::get('google/add', function () {
-    return view('google/app');
-});
+Route::middleware('auth')->group(function () {
+    Route::get('google/add', function () {
+        return view('google/app');
+    });
 
-Route::post('/google/add', 'GoogleMapController@add');
+    Route::post('/google/add', 'GoogleMapController@add');
+});
 
 Route::get('/google/{id}', 'GoogleMapController@show');
 

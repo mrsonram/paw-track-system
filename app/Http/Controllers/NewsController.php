@@ -57,9 +57,13 @@ class NewsController extends Controller
      */
     public function store(Request $request)
     {
-        $requestData = $request->all();
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'subtitle' => 'required|string|max:255',
+            'detail' => 'required|string',
+        ]);
 
-        News::create($requestData);
+        News::create($request->only(['title', 'subtitle', 'detail']));
 
         return redirect('message');
     }
@@ -99,10 +103,14 @@ class NewsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $requestData = $request->all();
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'subtitle' => 'required|string|max:255',
+            'detail' => 'required|string',
+        ]);
 
         $news = News::findOrFail($id);
-        $news->update($requestData);
+        $news->update($request->only(['title', 'subtitle', 'detail']));
 
         return redirect('message');
     }
