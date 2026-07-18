@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Animal;
+use App\Models\MapLocation;
 use App\Models\News;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class PetController extends Controller
      */
     public function index()
     {
-        $animals = Animal::whereNotNull('status')->get();
+        $animals = Animal::get();
         return view('pet/index', compact('animals'));
     }
 
@@ -24,8 +25,7 @@ class PetController extends Controller
         $species = $request->input('species');
         $status = $request->input('status');
 
-        $animals = Animal::whereNotNull('status')
-            ->when($species, fn ($query) => $query->where('species', 'like', "%{$species}%"))
+        $animals = Animal::when($species, fn ($query) => $query->where('species', 'like', "%{$species}%"))
             ->when($status, fn ($query) => $query->where('status', $status))
             ->orderBy('name')
             ->paginate(9)
@@ -42,7 +42,7 @@ class PetController extends Controller
 
     public function map()
     {
-        $animals = Animal::get();
+        $animals = Animal::get()->concat(MapLocation::get());
         return view('pet/map', compact('animals'));
     }
 
@@ -54,7 +54,7 @@ class PetController extends Controller
      */
     public function show($id)
     {
-        $animals = Animal::whereNotNull('status')->findOrFail($id);
+        $animals = Animal::findOrFail($id);
 
         return view('pet/show')->with([
             'data' => $animals

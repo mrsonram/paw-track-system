@@ -15,6 +15,13 @@ class MakeAnimalProfileColumnsNullable extends Migration
      */
     public function up()
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            // Non-MySQL test connections (sqlite) start from the final schema
+            // already, via 2026_07_18_030000_restore_animal_profile_columns_not_null
+            // — this historical MySQL-only ALTER doesn't apply there.
+            return;
+        }
+
         DB::statement('
             ALTER TABLE animals
                 MODIFY species VARCHAR(255) NULL,
@@ -35,6 +42,10 @@ class MakeAnimalProfileColumnsNullable extends Migration
      */
     public function down()
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         DB::statement('
             ALTER TABLE animals
                 MODIFY species VARCHAR(255) NOT NULL,

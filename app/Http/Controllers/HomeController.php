@@ -27,7 +27,7 @@ class HomeController extends Controller
     public function index()
     {
         $stats = [
-            'total_dogs' => Animal::whereNotNull('status')->count(),
+            'total_dogs' => Animal::count(),
             'alive_dogs' => Animal::where('status', 'มีชีวิตอยู่')->count(),
             'deceased_dogs' => Animal::where('status', 'เสียชีวิตแล้ว')->count(),
             'news_count' => News::count(),

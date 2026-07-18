@@ -47,11 +47,11 @@
                 anchor: new google.maps.Point(0, 0)
             };
 
-            @foreach($animals as $animals)
-            @if (isset($animals->lat))
+            @foreach($animals as $animal)
+            @if (isset($animal->lat))
                 addMarker({
-                    coords:{lat:{{ $animals->lat }}, lng:{{ $animals->lng }}},
-                    content:'<h4>{{ $animals->name }}</h4>'
+                    coords:{lat:{{ $animal->lat }}, lng:{{ $animal->lng }}},
+                    content:'<h4>{{ $animal->name }}</h4>'
                 });
             @endif
             @endforeach

@@ -21,8 +21,7 @@ class AdminController extends Controller
     {
         $q = $request->input('q');
 
-        $animals = Animal::whereNotNull('status')
-            ->when($q, function ($query) use ($q) {
+        $animals = Animal::when($q, function ($query) use ($q) {
                 $query->where(function ($query) use ($q) {
                     $query->where("name", "like", "%{$q}%")
                         ->orWhere("species", "like", "%{$q}%")
