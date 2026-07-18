@@ -14,7 +14,7 @@
 | 2 | ความปลอดภัย (Security & Validation) | 🔧 กำลังทำ |
 | 3 | เก็บกวาดโค้ด (Cleanup) | ✅ เสร็จ |
 | 4 | ต่อยอดฟีเจอร์ (Feature Enhancements) | 🔧 กำลังทำ |
-| 5 | ยกระดับโครงสร้าง (Infra & Upgrade) | 💡 พิจารณา |
+| 5 | ยกระดับโครงสร้าง (Infra & Upgrade) | 🔧 กำลังทำ |
 
 ---
 
@@ -90,21 +90,43 @@
   `type` ที่ไม่มีในตาราง `animals` (query จะพังถ้ามีเงื่อนไข search) — ลบออกระหว่างปรับ query ให้
   รองรับ pagination
 
-## 🟣 Phase 5: ยกระดับโครงสร้าง (Infra & Upgrade) 💡
+## 🟣 Phase 5: ยกระดับโครงสร้าง (Infra & Upgrade) 🔧
 เป้าหมาย: ความยั่งยืนระยะยาว
 
 - [ ] วางแผนอัปเกรด Laravel 8 (หมด support) → เวอร์ชันที่ยัง support (จะปลดล็อกให้ใช้ PHP 8.1+ ได้)
-- [ ] เปลี่ยน `minimum-stability` จาก `dev` เป็น `stable`
-- [ ] เพิ่มเทสต์จริง (Feature test สำหรับหน้า public + admin)
-- [ ] แยกตาราง `map_locations` ออกจาก `animals` ให้ชัดเจน
+  — **ยังไม่ทำ**, ตัดสินใจร่วมกับผู้ใช้ให้ข้ามในรอบนี้เพราะเป็น major upgrade ที่เสี่ยงสูง
+  (routing/auth/config อาจเปลี่ยน breaking) ควรทำเป็นงานแยกที่วางแผน/ทดสอบเต็มรูปแบบ
+- [x] เปลี่ยน `minimum-stability` จาก `dev` เป็น `stable` — ตรวจ `composer.lock` แล้วว่าไม่มี
+  package เวอร์ชัน dev/alpha/beta/RC ค้างอยู่ (`prefer-stable: true` เดิมทำให้ resolve เป็น
+  stable อยู่แล้ว), รัน `composer update --lock` เพื่อ sync hash โดยไม่เปลี่ยนเวอร์ชัน package ใดๆ
+  (0 installs/updates/removals) ทดสอบผ่าน
+- [x] เพิ่มเทสต์จริง (Feature test สำหรับหน้า public + admin) — เพิ่ม `tests/Feature/`:
+  `PublicPagesTest`, `ContactTest`, `AdminAccessTest`, `AdminDogTest`, `AdminNewsTest`,
+  `GoogleMapTest` (รวม 41 tests) ครอบคลุม: หน้า public ทั้งหมด + ค้นหา/filter/pagination,
+  ฟอร์มติดต่อ (validation + email notification), auth gating ของทุก route แอดมิน, dog/news
+  CRUD (รวม validation), map pin flow — ตั้งค่า `phpunit.xml` ให้ใช้ sqlite in-memory
+  (`DB_CONNECTION=sqlite`, `DB_DATABASE=:memory:`) แทนฐาน dev จริง เพื่อไม่ให้เทสต์แตะข้อมูลจริง
+  ใช้ `RefreshDatabase` migrate ใหม่ทุกเทสต์
+  - **พบบั๊กจริงระหว่างเขียนเทสต์**: `PetController@map` ใช้ `Animal::get()->merge(MapLocation::get())`
+    — `Collection::merge()` overwrite ตาม index ตัวเลข ถ้าทั้งสอง collection มีแค่ 1 รายการ
+    (index 0 ชนกัน) หมุดแผนที่จะทับสุนัขจนหายไปจากหน้า `/map` — แก้เป็น `->concat()` แทน
+    ยืนยันแล้วทั้งใน test และ live docker stack
+- [x] แยกตาราง `map_locations` ออกจาก `animals` ให้ชัดเจน — สร้างตาราง `map_locations`
+  (`name`/`lat`/`lng`) + โมเดล `App\Models\MapLocation`, ย้าย `GoogleMapController` มาใช้แทน
+  `Animal`; migration ย้ายข้อมูล pin เดิม (แถวที่ `status IS NULL`) จาก `animals` ไป
+  `map_locations` แล้วลบออกจาก `animals`; คืนคอลัมน์ profile ของ `animals` เป็น `NOT NULL`
+  ทั้งหมดอีกครั้ง (ปลอดภัยแล้วเพราะ pin ไม่แชร์ตารางนี้อีกต่อไป); ลบเงื่อนไข `whereNotNull('status')`
+  ที่เคยกันหมุดออกจากรายการสุนัขใน Phase 4 เพราะไม่จำเป็นอีกแล้ว
+  - หมายเหตุ migration ที่มี raw SQL เฉพาะ MySQL (`ALTER TABLE ... MODIFY`) ถูก guard ด้วย
+    `getDriverName() !== 'mysql'` ให้ no-op บน sqlite (ใช้ตอนรันเทสต์)
 - [x] ~~ตั้งค่า database service ใน `docker-compose.yml`~~ ✅ ทำแล้ว — nginx + php-fpm(8.0) + mysql
       ครบ, สร้าง `paw-track-dev`/`paw-track-prod`, migrate + seed user (ดู [../deployment/docker.md](../deployment/docker.md))
 
 ---
 
-**สถานะปัจจุบัน**: Phase 0-1-3 เสร็จแล้ว, Phase 2/4 เกือบเสร็จ (Phase 2 เหลือแค่จำกัดสิทธิ์ Google
-Maps API key ซึ่งต้องตั้งค่านอกโค้ดใน Google Cloud Console; Phase 4 ทำครบทุกข้อในลิสต์เดิมแล้ว
-เหลือแค่พิจารณาเพิ่มเติมถ้าต้องการ) — พร้อมพิจารณา Phase 5 ต่อ
+**สถานะปัจจุบัน**: Phase 0-1-3 เสร็จแล้ว, Phase 2/4/5 เกือบเสร็จ (Phase 2 เหลือแค่จำกัดสิทธิ์
+Google Maps API key; Phase 4 ทำครบทุกข้อในลิสต์เดิม; Phase 5 เหลือแค่แผนอัปเกรด Laravel 8 ซึ่ง
+ตั้งใจข้ามไว้ก่อนเพราะความเสี่ยงสูง) — โปรเจกต์อยู่ในสถานะดีสำหรับใช้งาน/ส่งงานได้แล้ว
 **เอกสารอ้างอิง**:
 - แผนแก้เร่งด่วน: [action-plan-2026-07-18.md](action-plan-2026-07-18.md)
 - ผลรีวิว: [../reports/2026-07-18-code-review.md](../reports/2026-07-18-code-review.md)
