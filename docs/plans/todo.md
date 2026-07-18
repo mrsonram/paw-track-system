@@ -10,7 +10,7 @@
 | Phase | เรื่อง | สถานะ |
 | --- | --- | --- |
 | 0 | เปลี่ยนชื่อโปรเจค + จัดเอกสาร | ✅ เสร็จ |
-| 1 | แก้บั๊ก/ความถูกต้อง (Correctness) | ❌ ยังไม่เริ่ม |
+| 1 | แก้บั๊ก/ความถูกต้อง (Correctness) | ✅ เสร็จ |
 | 2 | ความปลอดภัย (Security & Validation) | ❌ ยังไม่เริ่ม |
 | 3 | เก็บกวาดโค้ด (Cleanup) | ❌ ยังไม่เริ่ม |
 | 4 | ต่อยอดฟีเจอร์ (Feature Enhancements) | 💡 พิจารณา |
@@ -29,13 +29,14 @@
 
 ---
 
-## 🔴 Phase 1: แก้บั๊ก/ความถูกต้อง (Correctness) ❌
+## 🔴 Phase 1: แก้บั๊ก/ความถูกต้อง (Correctness) ✅
 เป้าหมาย: ทำให้ flow ที่มีอยู่ทำงานถูกต้อง — ดูรายละเอียดใน [action-plan-2026-07-18.md](action-plan-2026-07-18.md)
 
-- [ ] **แก้ typo `$fillbale` → `$fillable`** ใน `app/Models/Contact.php` (ทำให้ contact form บันทึกได้)
-- [ ] **แก้ redirect `/maps` ที่ไม่มีอยู่** ใน `GoogleMapController@store` → ชี้ route จริง
-- [ ] **แก้ `GoogleMap` ให้ตรงกับคอลัมน์จริง** — ตอนนี้อ้าง `city`, `title`, `description` ที่ตาราง `animals` ไม่มี
-- [ ] ทดสอบ flow: หน้าแรก, รายละเอียดสุนัข, ข่าว, แผนที่, ส่งฟอร์มติดต่อ, admin CRUD
+- [x] **แก้ typo `$fillbale` → `$fillable`** ใน `app/Models/Contact.php` (ทำให้ contact form บันทึกได้)
+- [x] **แก้ redirect `/maps` ที่ไม่มีอยู่** ใน `GoogleMapController@store` → ชี้ route จริง (`/map`)
+- [x] **แก้ `GoogleMap` ให้ตรงกับคอลัมน์จริง** — เปลี่ยนจาก `city`/`title`/`description` เป็น `location`/`name` ให้ตรงตาราง `animals` (รวมถึง JS ใน `pages/google-map.blade.php`)
+- [x] ทดสอบ flow: หน้าแรก, รายละเอียดสุนัข, ข่าว, แผนที่, ส่งฟอร์มติดต่อ, admin CRUD (ผ่าน docker stack ทั้งหมด)
+- [x] **พบเพิ่มระหว่างทดสอบ**: `ContactController` ครอบ `auth` middleware ทั้ง controller ทำให้ผู้เยี่ยมชมส่งฟอร์มติดต่อไม่ได้ — แก้เป็น `->except(['create', 'store'])`
 
 ## 🟠 Phase 2: ความปลอดภัย (Security & Validation) ❌
 เป้าหมาย: ปิดช่องโหว่พื้นฐาน — ดู [../security/recommendations.md](../security/recommendations.md)
@@ -81,7 +82,7 @@
 
 ---
 
-**สถานะปัจจุบัน**: Phase 0 เสร็จแล้ว — พร้อมเริ่ม Phase 1 (แก้บั๊ก) ต่อทันที
+**สถานะปัจจุบัน**: Phase 0-1 เสร็จแล้ว — พร้อมเริ่ม Phase 2 (validation + ป้องกัน admin) ต่อทันที
 **เอกสารอ้างอิง**:
 - แผนแก้เร่งด่วน: [action-plan-2026-07-18.md](action-plan-2026-07-18.md)
 - ผลรีวิว: [../reports/2026-07-18-code-review.md](../reports/2026-07-18-code-review.md)
