@@ -29,20 +29,42 @@
         </div>
 
         <div class="container">
+            <form class="row g-2 mb-4" method="GET" action="{{ url('/') }}/info">
+                <div class="col-md-4">
+                    <input type="text" name="species" class="form-control" placeholder="ค้นหาพันธุ์..." value="{{ $species }}">
+                </div>
+                <div class="col-md-4">
+                    <select name="status" class="form-select form-control">
+                        <option value="">สถานะทั้งหมด</option>
+                        <option value="มีชีวิตอยู่" {{ $status == 'มีชีวิตอยู่' ? 'selected' : '' }}>มีชีวิตอยู่</option>
+                        <option value="เสียชีวิตแล้ว" {{ $status == 'เสียชีวิตแล้ว' ? 'selected' : '' }}>เสียชีวิตแล้ว</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">ค้นหา</button>
+                </div>
+            </form>
+        </div>
+        <div class="container">
             <div class="row g-2">
-                @foreach($animals as $animals)
+                @forelse($animals as $animal)
                 <div class="col">
                     <div class="card text-center" style="width: 18rem;">
-                        <img src="{{ isset($animals->image) ? asset('storage/'.$animals->image) : asset('source/background.png') }}" class="card-img-top" alt="...">
+                        <img src="{{ isset($animal->image) ? asset('storage/'.$animal->image) : asset('source/background.png') }}" class="card-img-top" alt="...">
                         <div class="card-body">
-                        <h5 class="card-title" style="font-size: 24px">{{ isset($animals->name) ? $animals->name : "ตูบ" }}</h5>
+                        <h5 class="card-title" style="font-size: 24px">{{ isset($animal->name) ? $animal->name : "ตูบ" }}</h5>
                         <div class="d-grid gap-2">
-                            <button class="btn btn-primary" style="font-size: 24px" onClick="show({{ $animals->id }})">ข้อมูล</button>
+                            <button class="btn btn-primary" style="font-size: 24px" onClick="show({{ $animal->id }})">ข้อมูล</button>
                         </div>
                         </div>
                     </div>
                 </div>
-                @endforeach
+                @empty
+                <p class="text-center">ไม่พบข้อมูลสุนัขที่ตรงกับเงื่อนไข</p>
+                @endforelse
+            </div>
+            <div class="d-flex justify-content-center mt-4">
+                {{ $animals->links() }}
             </div>
         </div>
 </section>

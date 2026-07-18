@@ -77,6 +77,9 @@
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
+        <div class="d-flex justify-content-center mt-4">
+            {{ $news->links() }}
+        </div>
     </div>
 </section>
 @endsection

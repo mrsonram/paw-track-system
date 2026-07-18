@@ -21,25 +21,24 @@ class AdminController extends Controller
     {
         $q = $request->input('q');
 
-        if (!empty($q)) {
-            $animals = Animal::where("name", "like", "%{$q}%")
-                ->orWhere("type", "like", "%{$q}%")
-                ->orWhere("species", "like", "%{$q}%")
-                ->orWhere("marking", "like", "%{$q}%")
-                ->orWhere("gender", "like", "%{$q}%")
-                ->orWhere("collar", "like", "%{$q}%")
-                ->orWhere("age", "like", "%{$q}%")
-                ->orWhere("status", "like", "%{$q}%")
-                ->orWhere("vet", "like", "%{$q}%")
-                ->orWhere("owner", "like", "%{$q}%")
-                ->orWhere("location", "like", "%{$q}%")
-                ->get();;
-        }
-
-        else {
-            $animals = Animal::get()
-                ->sortBy("name");
-        }
+        $animals = Animal::whereNotNull('status')
+            ->when($q, function ($query) use ($q) {
+                $query->where(function ($query) use ($q) {
+                    $query->where("name", "like", "%{$q}%")
+                        ->orWhere("species", "like", "%{$q}%")
+                        ->orWhere("marking", "like", "%{$q}%")
+                        ->orWhere("gender", "like", "%{$q}%")
+                        ->orWhere("collar", "like", "%{$q}%")
+                        ->orWhere("age", "like", "%{$q}%")
+                        ->orWhere("status", "like", "%{$q}%")
+                        ->orWhere("vet", "like", "%{$q}%")
+                        ->orWhere("owner", "like", "%{$q}%")
+                        ->orWhere("location", "like", "%{$q}%");
+                });
+            })
+            ->orderBy('name')
+            ->paginate(15)
+            ->withQueryString();
 
         return view('admin/dogs/dog', compact('animals', 'q'));
     }

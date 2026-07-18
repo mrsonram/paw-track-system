@@ -36,23 +36,24 @@
                         <th scope="col">จัดการ</th>
                     </tr>
                 </thead>
-                @foreach($animals as $animals)
+                @foreach($animals as $animal)
                     <tr>
-                        <td scope="col">{{ isset($animals->name) ? $animals->name : 'ไม่ทราบ' }}</td>
-                        <td scope="col">{{ isset($animals->species) ? $animals->species : 'ไม่ทราบ' }}</td>
-                        <td scope="col">{{ isset($animals->gender) ? $animals->gender : 'ไม่ทราบ' }}</td>
-                        <td scope="col">{{ isset($animals->collar) ? $animals->collar : 'ไม่ทราบ' }}</td>
-                        <td scope="col">{{ isset($animals->age) ? $animals->age : 'ไม่ทราบ' }}</td>
-                        <td scope="col">{{ isset($animals->status) ? $animals->status : 'ไม่ทราบ' }}</td>
-                        <td scope="col">{{ isset($animals->owner) ? $animals->owner : 'ไม่ทราบ' }}</td>
+                        <td scope="col">{{ isset($animal->name) ? $animal->name : 'ไม่ทราบ' }}</td>
+                        <td scope="col">{{ isset($animal->species) ? $animal->species : 'ไม่ทราบ' }}</td>
+                        <td scope="col">{{ isset($animal->gender) ? $animal->gender : 'ไม่ทราบ' }}</td>
+                        <td scope="col">{{ isset($animal->collar) ? $animal->collar : 'ไม่ทราบ' }}</td>
+                        <td scope="col">{{ isset($animal->age) ? $animal->age : 'ไม่ทราบ' }}</td>
+                        <td scope="col">{{ isset($animal->status) ? $animal->status : 'ไม่ทราบ' }}</td>
+                        <td scope="col">{{ isset($animal->owner) ? $animal->owner : 'ไม่ทราบ' }}</td>
                         <td>
                         <div class="d-grid gap-2 d-md-block">
-                            <a class="btn btn-outline-info" data-mdb-ripple-color="dark" href="{{ url('/') }}/dog/{{ $animals->id }}"><i class="fas fa-info"></i></a>
+                            <a class="btn btn-outline-info" data-mdb-ripple-color="dark" href="{{ url('/') }}/dog/{{ $animal->id }}"><i class="fas fa-info"></i></a>
                         </div>
                         </td>
                     </tr>
                 @endforeach
             </table>
+            {{ $animals->links() }}
         </div>
       </div>
 </div>

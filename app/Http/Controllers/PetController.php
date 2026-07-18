@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Animal;
 use App\Models\News;
+use Illuminate\Http\Request;
 
 class PetController extends Controller
 {
@@ -14,20 +15,28 @@ class PetController extends Controller
      */
     public function index()
     {
-        $animals = Animal::get();
+        $animals = Animal::whereNotNull('status')->get();
         return view('pet/index', compact('animals'));
     }
 
-    public function info()
+    public function info(Request $request)
     {
-        $animals = Animal::get()
-                        ->sortBy("name");
-        return view('pet/info', compact('animals'));
+        $species = $request->input('species');
+        $status = $request->input('status');
+
+        $animals = Animal::whereNotNull('status')
+            ->when($species, fn ($query) => $query->where('species', 'like', "%{$species}%"))
+            ->when($status, fn ($query) => $query->where('status', $status))
+            ->orderBy('name')
+            ->paginate(9)
+            ->withQueryString();
+
+        return view('pet/info', compact('animals', 'species', 'status'));
     }
 
     public function news()
     {
-        $news = News::get();
+        $news = News::paginate(9);
         return view('pet/news', compact('news'));
     }
 
@@ -45,7 +54,7 @@ class PetController extends Controller
      */
     public function show($id)
     {
-        $animals = Animal::findOrFail($id);
+        $animals = Animal::whereNotNull('status')->findOrFail($id);
 
         return view('pet/show')->with([
             'data' => $animals
