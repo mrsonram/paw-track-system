@@ -12,7 +12,7 @@
 | 0 | เปลี่ยนชื่อโปรเจค + จัดเอกสาร | ✅ เสร็จ |
 | 1 | แก้บั๊กความถูกต้อง | ✅ เสร็จ |
 | 2 | เพิ่ม validation + ป้องกัน admin | ✅ เสร็จ |
-| 3 | เก็บกวาดโค้ด | ❌ ยังไม่เริ่ม |
+| 3 | เก็บกวาดโค้ด | ✅ เสร็จ |
 
 ## Phase 0: เปลี่ยนชื่อ + เอกสาร ✅
 - [x] `composer.json` → `pawtrack/pawtrack`
@@ -35,11 +35,14 @@
 5. [x] ตรวจ `.env` ไม่ถูก track (`git ls-files --error-unmatch .env` → not tracked, ผ่าน)
 6. [x] **พบเพิ่มระหว่างทดสอบ**: `GoogleMapController@add/@store` ยังคง insert พังด้วย SQL error เพราะฟอร์มไม่ได้กรอกคอลัมน์ NOT NULL อื่น ๆ ของตาราง `animals` (species, gender, ฯลฯ) — ตัดสินใจร่วมกับผู้ใช้ให้ **บันทึกไว้เป็นข้อจำกัดที่รู้ (known limitation)** สำหรับ phase ถัดไป ไม่แก้ตอนนี้
 
-## Phase 3: เก็บกวาดโค้ด ❌
-1. [ ] ลบ `use Symfony\Component\Console\Input\Input;` ใน `routes/web.php`
-2. [ ] ลบ/ปรับ `Route::resource('/', 'PetController')` ที่ทับซ้อน
-3. [ ] ลบ resource method stub + route ที่ชี้มา
-4. [ ] ลบโค้ด comment ทิ้งใน `PetController@map`
+## Phase 3: เก็บกวาดโค้ด ✅
+1. [x] ลบ import ที่ไม่ใช้ใน `routes/web.php`: `Symfony\Component\Console\Input\Input`, `App\Models\Pet`, `App\Http\Controllers\TesterController`, `App\Http\Controllers\AutoAddressController` (พบเพิ่ม 3 ตัวหลังนอกจากตัวที่ระบุในแผน)
+2. [x] ลบ `Route::resource('/', 'PetController')` ที่ทับซ้อนกับ `Route::get('/', ...)` — เดิมสร้าง route `{}` (show/edit/update/destroy) ที่พังเพราะชื่อ resource เป็น `/` ทำให้ parameter ไม่มีชื่อ และ route `create`/`store` ที่ชี้ไปเมธอด stub
+3. [x] ลบ resource method stub + route ที่ชี้มา — ครอบคลุมทั้งโปรเจกต์ (ตกลงกับผู้ใช้ให้ขยายขอบเขตเกินแค่ PetController):
+   - `PetController`: ลบ `create/store/edit/update/destroy` (stub, ไม่มี route แล้วหลังลบข้อ 2) และ `gmaps()` (อ้างอิง view `gmaps` ที่ไม่มีอยู่จริง ไม่เคยถูก route)
+   - `ContactController`: ลบ `create/edit/update` (stub, ไม่มี view ไหนลิงก์ไปหา) และปรับ `Route::resource('contact', ...)` เหลือ `->only(['index','store','show','destroy'])`, ปรับ `except(['create','store'])` เหลือ `except(['store'])`
+   - `GoogleMapController`: ลบ `create/edit/update/destroy` (stub ไม่มี route ใดๆชี้มาเลย) และลบ `index()` + view `resources/views/pages/google-map.blade.php` ทั้งฟีเจอร์ (ไม่มี route ชี้มา เป็นโค้ดกำพร้าทั้งหมด)
+4. [x] ลบโค้ด comment ทิ้งใน `PetController@map`
 
 ## เกณฑ์ถือว่าเสร็จ (Definition of Done)
 - [x] ส่งฟอร์มติดต่อแล้วบันทึกลง DB ได้จริง

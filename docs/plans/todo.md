@@ -12,7 +12,7 @@
 | 0 | เปลี่ยนชื่อโปรเจค + จัดเอกสาร | ✅ เสร็จ |
 | 1 | แก้บั๊ก/ความถูกต้อง (Correctness) | ✅ เสร็จ |
 | 2 | ความปลอดภัย (Security & Validation) | 🔧 กำลังทำ |
-| 3 | เก็บกวาดโค้ด (Cleanup) | ❌ ยังไม่เริ่ม |
+| 3 | เก็บกวาดโค้ด (Cleanup) | 🔧 กำลังทำ |
 | 4 | ต่อยอดฟีเจอร์ (Feature Enhancements) | 💡 พิจารณา |
 | 5 | ยกระดับโครงสร้าง (Infra & Upgrade) | 💡 พิจารณา |
 
@@ -52,14 +52,14 @@
 - [ ] จำกัดสิทธิ์ Google Maps API key (HTTP referrer) + ย้ายไปอ่านจาก config/env — **ยังไม่ทำ**, ต้องตั้งค่าใน Google Cloud Console (นอกเหนือจากโค้ด)
 - [ ] **พบเพิ่มระหว่างทดสอบ**: `GoogleMapController@add/@store` ยัง insert พังด้วย SQL error เพราะฟอร์มไม่กรอกคอลัมน์ NOT NULL อื่น ๆ ของ `animals` (species, gender, ฯลฯ) — บันทึกเป็นข้อจำกัดที่รู้ไว้ก่อน ไม่แก้ในรอบนี้
 
-## 🟡 Phase 3: เก็บกวาดโค้ด (Cleanup) ❌
+## 🟡 Phase 3: เก็บกวาดโค้ด (Cleanup) 🔧
 เป้าหมาย: ลดหนี้ทางเทคนิค อ่านโค้ดง่ายขึ้น
 
-- [ ] ลบ `use Symfony\Component\Console\Input\Input;` ที่ไม่ใช้ใน `routes/web.php`
-- [ ] ลบ `Route::resource('/', 'PetController')` ที่ทับซ้อน / ใช้ `->only([...])`
-- [ ] ลบ resource method ที่เป็น stub (`//`) และ route ที่ชี้มา
-- [ ] ลบโค้ดที่ comment ทิ้ง (เช่นใน `PetController@map`)
-- [ ] รวม/ลดจำนวน model ที่ชี้ตาราง `animals` ซ้ำ (`Pet`/`Admin`/`GoogleMap`)
+- [x] ลบ import ที่ไม่ใช้ใน `routes/web.php` (`Symfony\Component\Console\Input\Input`, `App\Models\Pet`, `TesterController`, `AutoAddressController`)
+- [x] ลบ `Route::resource('/', 'PetController')` ที่ทับซ้อน (เดิมสร้าง route `{}` พังเพราะไม่มีชื่อ parameter)
+- [x] ลบ resource method ที่เป็น stub (`//`) และ route ที่ชี้มา — ขยายครอบคลุมทั้ง `PetController`, `ContactController` (ปรับเหลือ `->only(['index','store','show','destroy'])`), และ `GoogleMapController` (ลบทั้ง `index()` + view กำพร้า `pages/google-map.blade.php` ด้วย)
+- [x] ลบโค้ดที่ comment ทิ้ง (เช่นใน `PetController@map`)
+- [ ] รวม/ลดจำนวน model ที่ชี้ตาราง `animals` ซ้ำ (`Pet`/`Admin`/`GoogleMap`) — ยังไม่ทำ เป็นงานปรับโครงสร้างที่ใหญ่กว่ารอบนี้
 
 ## 🔵 Phase 4: ต่อยอดฟีเจอร์ (Feature Enhancements) 💡
 เป้าหมาย: เพิ่มคุณค่าให้ระบบ (เลือกทำตามเวลาที่มี)
@@ -83,7 +83,7 @@
 
 ---
 
-**สถานะปัจจุบัน**: Phase 0-1 เสร็จแล้ว, Phase 2 เกือบเสร็จ (เหลือแค่จำกัดสิทธิ์ Google Maps API key) — พร้อมเริ่ม Phase 3 (เก็บกวาดโค้ด) ต่อได้
+**สถานะปัจจุบัน**: Phase 0-1 เสร็จแล้ว, Phase 2/3 เกือบเสร็จ (เหลือ: จำกัดสิทธิ์ Google Maps API key, และรวมโมเดล `Pet`/`Admin`/`GoogleMap`) — พร้อมพิจารณา Phase 4/5 ต่อ
 **เอกสารอ้างอิง**:
 - แผนแก้เร่งด่วน: [action-plan-2026-07-18.md](action-plan-2026-07-18.md)
 - ผลรีวิว: [../reports/2026-07-18-code-review.md](../reports/2026-07-18-code-review.md)
