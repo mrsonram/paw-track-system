@@ -12,7 +12,7 @@
 | 0 | เปลี่ยนชื่อโปรเจค + จัดเอกสาร | ✅ เสร็จ |
 | 1 | แก้บั๊ก/ความถูกต้อง (Correctness) | ✅ เสร็จ |
 | 2 | ความปลอดภัย (Security & Validation) | 🔧 กำลังทำ |
-| 3 | เก็บกวาดโค้ด (Cleanup) | 🔧 กำลังทำ |
+| 3 | เก็บกวาดโค้ด (Cleanup) | ✅ เสร็จ |
 | 4 | ต่อยอดฟีเจอร์ (Feature Enhancements) | 💡 พิจารณา |
 | 5 | ยกระดับโครงสร้าง (Infra & Upgrade) | 💡 พิจารณา |
 
@@ -50,7 +50,7 @@
 - [x] ตรวจว่า `.env` (มี `APP_KEY`/รหัส DB) ไม่ถูก track ใน git (`git ls-files .env` → not tracked, ผ่าน)
 - [x] จำกัดสิทธิ์เข้าถึงหน้า admin ด้วย middleware `auth` — เพิ่มให้ `google/add` (GET+POST) ที่เดิมเปิดสาธารณะทั้งหมด (`dog`/`message`/`contact` มีอยู่แล้ว)
 - [ ] จำกัดสิทธิ์ Google Maps API key (HTTP referrer) + ย้ายไปอ่านจาก config/env — **ยังไม่ทำ**, ต้องตั้งค่าใน Google Cloud Console (นอกเหนือจากโค้ด)
-- [ ] **พบเพิ่มระหว่างทดสอบ**: `GoogleMapController@add/@store` ยัง insert พังด้วย SQL error เพราะฟอร์มไม่กรอกคอลัมน์ NOT NULL อื่น ๆ ของ `animals` (species, gender, ฯลฯ) — บันทึกเป็นข้อจำกัดที่รู้ไว้ก่อน ไม่แก้ในรอบนี้
+- [x] **แก้แล้ว**: `GoogleMapController@add/@store` เคย insert พังด้วย SQL error เพราะฟอร์มไม่กรอกคอลัมน์ NOT NULL อื่น ๆ ของ `animals` — เพิ่ม migration `2026_07_18_000000_make_animal_profile_columns_nullable` ทำให้คอลัมน์ที่ไม่เกี่ยวกับ map pin (species/marking/gender/collar/age/status/vet/owner/image/location) เป็น nullable, เหลือแค่ `name`/`lat`/`lng` ที่ required ระดับ DB ทดสอบแล้วว่า insert ผ่านจริง
 
 ## 🟡 Phase 3: เก็บกวาดโค้ด (Cleanup) 🔧
 เป้าหมาย: ลดหนี้ทางเทคนิค อ่านโค้ดง่ายขึ้น
@@ -59,7 +59,7 @@
 - [x] ลบ `Route::resource('/', 'PetController')` ที่ทับซ้อน (เดิมสร้าง route `{}` พังเพราะไม่มีชื่อ parameter)
 - [x] ลบ resource method ที่เป็น stub (`//`) และ route ที่ชี้มา — ขยายครอบคลุมทั้ง `PetController`, `ContactController` (ปรับเหลือ `->only(['index','store','show','destroy'])`), และ `GoogleMapController` (ลบทั้ง `index()` + view กำพร้า `pages/google-map.blade.php` ด้วย)
 - [x] ลบโค้ดที่ comment ทิ้ง (เช่นใน `PetController@map`)
-- [ ] รวม/ลดจำนวน model ที่ชี้ตาราง `animals` ซ้ำ (`Pet`/`Admin`/`GoogleMap`) — ยังไม่ทำ เป็นงานปรับโครงสร้างที่ใหญ่กว่ารอบนี้
+- [x] รวม/ลดจำนวน model ที่ชี้ตาราง `animals` ซ้ำ — ลบ `Pet`/`Admin`/`GoogleMap` (3 คลาสที่มี `$table`/`$primaryKey` เหมือนกันทุกตัว) เหลือ `Animal` เดียว, อัปเดต `PetController`/`AdminController`/`GoogleMapController` ให้ใช้ตัวเดียวกัน
 
 ## 🔵 Phase 4: ต่อยอดฟีเจอร์ (Feature Enhancements) 💡
 เป้าหมาย: เพิ่มคุณค่าให้ระบบ (เลือกทำตามเวลาที่มี)
@@ -83,7 +83,7 @@
 
 ---
 
-**สถานะปัจจุบัน**: Phase 0-1 เสร็จแล้ว, Phase 2/3 เกือบเสร็จ (เหลือ: จำกัดสิทธิ์ Google Maps API key, และรวมโมเดล `Pet`/`Admin`/`GoogleMap`) — พร้อมพิจารณา Phase 4/5 ต่อ
+**สถานะปัจจุบัน**: Phase 0-1-3 เสร็จแล้ว, Phase 2 เกือบเสร็จ (เหลือแค่จำกัดสิทธิ์ Google Maps API key ซึ่งต้องตั้งค่านอกโค้ดใน Google Cloud Console) — พร้อมพิจารณา Phase 4/5 ต่อ
 **เอกสารอ้างอิง**:
 - แผนแก้เร่งด่วน: [action-plan-2026-07-18.md](action-plan-2026-07-18.md)
 - ผลรีวิว: [../reports/2026-07-18-code-review.md](../reports/2026-07-18-code-review.md)

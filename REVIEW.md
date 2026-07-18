@@ -6,12 +6,15 @@
 - 🔐 ข้อเสนอแนะความปลอดภัย + สถานะ: [`docs/security/recommendations.md`](docs/security/recommendations.md)
 - 🗺️ แผนแก้ไขเร่งด่วน: [`docs/plans/action-plan-2026-07-18.md`](docs/plans/action-plan-2026-07-18.md)
 
-## สรุปสิ่งที่ต้องแก้ก่อน (Top priority)
+## สถานะล่าสุด
 
-1. 🔴 `Contact` model สะกด `$fillbale` ผิด → contact form บันทึกไม่ได้
-2. 🔴 หลาย controller บันทึก `$request->all()` โดยไม่ validate
-3. 🔴 หน้า admin ไม่มี `auth` middleware ป้องกัน
-4. 🔴 `GoogleMapController@store` redirect ไป `/maps` ที่ไม่มี → 404
-5. 🟠 `GoogleMap` อ้างคอลัมน์ (`city`/`title`/`description`) ที่ไม่มีในตาราง `animals`
+Phase 1-3 ของ [แผนแก้ไขเร่งด่วน](docs/plans/action-plan-2026-07-18.md) เสร็จแล้วทั้งหมด
+(bug ความถูกต้อง, validation + auth, เก็บกวาดโค้ด + รวมโมเดล `Pet`/`Admin`/`GoogleMap`
+เป็น `Animal` เดียว) ดูรายละเอียดที่ [`docs/plans/todo.md`](docs/plans/todo.md)
+
+ที่ยังเหลือ:
+- 🟠 Google Maps API key ยัง hardcode ใน Blade — ต้องย้ายไป config/env และตั้ง HTTP
+  referrer restriction บน Google Cloud Console
+- 🟡 Laravel 8 หมด security support แล้ว — ยังไม่ได้วางแผนอัปเกรด
 
 ดูสารบัญเอกสารทั้งหมดที่ [`docs/README.md`](docs/README.md)

@@ -44,6 +44,20 @@
    - `GoogleMapController`: ลบ `create/edit/update/destroy` (stub ไม่มี route ใดๆชี้มาเลย) และลบ `index()` + view `resources/views/pages/google-map.blade.php` ทั้งฟีเจอร์ (ไม่มี route ชี้มา เป็นโค้ดกำพร้าทั้งหมด)
 4. [x] ลบโค้ด comment ทิ้งใน `PetController@map`
 
+## Phase 3 ส่วนต่อ (ตามคำขอผู้ใช้ หลังปิด Phase 3) ✅
+1. [x] **แก้ `GoogleMapController@add/@store` insert bug**: เพิ่ม migration
+   `2026_07_18_000000_make_animal_profile_columns_nullable` ทำให้คอลัมน์ที่ไม่เกี่ยวกับ
+   map pin (species/marking/gender/collar/age/status/vet/owner/image/location) เป็น
+   nullable ในตาราง `animals` — เหลือแค่ `name`/`lat`/`lng` ที่ required ระดับ DB
+   (validation ระดับแอปของ `AdminController` ยังคง require ครบทุก field เหมือนเดิมสำหรับ
+   flow เพิ่มหมาเต็มโปรไฟล์) ทดสอบแล้วว่า `/google/add` บันทึกด้วยแค่ name/lat/lng ได้จริง
+2. [x] **รวมโมเดล `Pet`/`Admin`/`GoogleMap`**: ทั้ง 3 คลาสมี `$table`/`$primaryKey`/
+   `$timestamps` เหมือนกันทุกตัว ต่างกันแค่ชื่อคลาส — รวมเป็น `App\Models\Animal` เดียว,
+   อัปเดต `PetController`/`AdminController`/`GoogleMapController` ให้ import/ใช้ `Animal`
+   แทน, ลบไฟล์โมเดลเดิมทั้ง 3
+3. [x] อัปเดต `CLAUDE.md`, `REVIEW.md`, `docs/security/recommendations.md` ให้ตรงกับ
+   สถานะปัจจุบัน (ลบ gotcha ที่แก้แล้ว, อัปเดตสถานะเป็น ✅)
+
 ## เกณฑ์ถือว่าเสร็จ (Definition of Done)
 - [x] ส่งฟอร์มติดต่อแล้วบันทึกลง DB ได้จริง
 - [x] หน้าแผนที่แสดงข้อมูลถูกต้อง ไม่ 404 หลังบันทึก

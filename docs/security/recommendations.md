@@ -7,46 +7,29 @@
 
 | # | ประเด็น | ระดับ | สถานะ |
 | --- | --- | --- | --- |
-| 1 | ไม่ validate input ก่อนบันทึก (`$request->all()`) | 🔴 สูง | ❌ ยังไม่แก้ |
-| 2 | หน้า admin ไม่มี `auth` middleware ป้องกัน | 🔴 สูง | ❌ ยังไม่แก้ |
-| 3 | `.env` มี `APP_KEY` + รหัส DB — ต้องไม่ถูก commit | 🟠 กลาง | ⚠️ ตรวจสอบ |
+| 1 | ไม่ validate input ก่อนบันทึก (`$request->all()`) | 🔴 สูง | ✅ แก้แล้ว |
+| 2 | หน้า admin ไม่มี `auth` middleware ป้องกัน | 🔴 สูง | ✅ แก้แล้ว |
+| 3 | `.env` มี `APP_KEY` + รหัส DB — ต้องไม่ถูก commit | 🟠 กลาง | ✅ ตรวจแล้ว ไม่ถูก track |
 | 4 | Google Maps API key ฝังใน Blade | 🟠 กลาง | ❌ ยังไม่แก้ |
 | 5 | Laravel 8 หมด security support | 🟡 ต่ำ | 💡 วางแผน |
 
-## 1. Validation & Mass Assignment 🔴
+## 1. Validation & Mass Assignment 🔴 ✅ แก้แล้ว
 
-หลาย controller บันทึกข้อมูลผู้ใช้ตรง ๆ:
-```php
-GoogleMap::create($request->all());   // ไม่ validate, ไม่จำกัด field
-```
-**แก้:** ใช้ `$request->validate([...])` และส่งเฉพาะ field ที่ต้องการ
-```php
-$data = $request->validate([
-    'name' => 'required|string|max:255',
-    'lat'  => 'required|numeric',
-    'lng'  => 'required|numeric',
-]);
-GoogleMap::create($data);
-```
-ใช้กับ: `GoogleMapController@add/@store`, `ContactController@store`, `AdminController`, `NewsController`
+หลาย controller เคยบันทึกข้อมูลผู้ใช้ตรง ๆ โดยไม่ validate — ตอนนี้ทุก action ที่บันทึกข้อมูล
+(`GoogleMapController@add/@store`, `ContactController@store`, `AdminController`,
+`NewsController`) มี `$request->validate([...])` และส่งเฉพาะ field ที่ validate แล้ว
+(`$request->only([...])` หรือ array ที่ validate คืนมา) แทน `$request->all()`
 
-## 2. ป้องกันหน้า Admin 🔴
+## 2. ป้องกันหน้า Admin 🔴 ✅ แก้แล้ว
 
-route กลุ่ม `/dog`, `/message`, `/contact` (admin) ไม่มี `auth` middleware → ใครก็เข้าถึง CRUD ได้
-**แก้:**
-```php
-Route::middleware('auth')->group(function () {
-    Route::resource('dog', 'AdminController');
-    // ...
-});
-```
+`AdminController`, `NewsController`, `ContactController` มี `$this->middleware('auth')`
+ที่ constructor (เว้น action สาธารณะ เช่น `ContactController@store`), และ `google/add`
+(GET+POST) ครอบด้วย `Route::middleware('auth')->group(...)` ใน `routes/web.php`
 
-## 3. ป้องกัน secret หลุด 🟠
+## 3. ป้องกัน secret หลุด 🟠 ✅ ตรวจแล้ว
 
-- `.env` อยู่ใน `.gitignore` แล้ว (ดี) — แต่ต้องตรวจว่าไม่เคยถูก commit:
-  ```bash
-  git ls-files --error-unmatch .env   # ถ้าไม่ error = ยังถูก track → git rm --cached .env
-  ```
+- `.env` อยู่ใน `.gitignore` และตรวจแล้วว่าไม่เคยถูก track:
+  `git ls-files --error-unmatch .env` → error (not tracked) ✅
 - ห้ามใส่ `APP_KEY` / รหัสผ่าน DB จริงในเอกสารหรือ `.env.example`
 
 ## 4. Google Maps API Key 🟠

@@ -41,11 +41,13 @@ docker compose up -d --build     # run via Docker
 - **Routing:** all routes are in `routes/web.php`. Mix of `resource` routes and
   explicit `GET`/`POST` definitions. Controllers are referenced both by string
   (`'PetController@index'`) and by class (`[PetController::class, 'index']`).
-- **Controllers:** `app/Http/Controllers/`. Many resource methods are stubbed
-  (`//`) — only the used actions are implemented.
-- **Models:** `app/Models/`. `Pet`, `Admin`, and `GoogleMap` all map to the same
-  `animals` table. `$timestamps = false` on most models. `$fillable` is used for
-  mass assignment.
+- **Controllers:** `app/Http/Controllers/`. Only implemented, routed actions exist —
+  unused resource stubs have been removed.
+- **Models:** `app/Models/`. `PetController`, `AdminController`, and
+  `GoogleMapController` all share a single `Animal` model (`app/Models/Animal.php`)
+  mapped to the `animals` table — there used to be three separate model classes
+  (`Pet`/`Admin`/`GoogleMap`) with identical `$table`/`$primaryKey`, consolidated into
+  one. `$timestamps = false` on most models. `$fillable` is used for mass assignment.
 - **Views:** `resources/views/`, organized by area (`pet/`, `admin/`, `google/`,
   `pages/`, `auth/`, `layouts/`). Layouts: `layouts/app.blade.php`,
   `layouts/main.blade.php`.
@@ -54,30 +56,29 @@ docker compose up -d --build     # run via Docker
 ## Data model
 
 - `animals`: `name, species, marking, gender, collar, age, status, vet, owner,
-  image, location, lat, lng`
+  image, location, lat, lng`. Only `name`/`lat`/`lng` are `NOT NULL` — the rest are
+  nullable because the table serves two flows that don't share all columns: full
+  dog profiles (`AdminController`, which validates all fields at the app level) and
+  lightweight map pins (`GoogleMapController@add/@store`, which only collects
+  `name`/`lat`/`lng`).
 - `news`: `title, subtitle, detail`
 - `contacts`: `name, email, title, message`
 - `users`: Laravel default auth table
 
 ## Working notes / gotchas
 
-- `Pet`, `Admin`, and `GoogleMap` models **share** the `animals` table. Be careful
-  when changing one — check the others.
-- `GoogleMap` model's `$fillable` includes `city`, and `GoogleMapController@index`
-  reads `$value->title` / `$value->description`, but the `animals` table has no such
-  columns. Verify columns before relying on these.
-- `Contact` model has a typo: `$fillbale` instead of `$fillable` — mass assignment
-  guard does not work as intended there.
-- User input is passed straight to `Model::create($request->all())` without
-  validation in several controllers. Add `$request->validate([...])` before writing.
-- Google Maps needs an API key embedded in the relevant Blade views to render.
-- See [`REVIEW.md`](REVIEW.md) for the full list of known issues.
+- Google Maps needs an API key embedded in the relevant Blade views to render; it's
+  currently hardcoded rather than read from config/env, and has no HTTP referrer
+  restriction on Google Cloud Console — still open.
+- See [`REVIEW.md`](REVIEW.md) for the full list of known issues and
+  [`docs/plans/todo.md`](docs/plans/todo.md) for current status.
 
 ## Conventions for changes
 
 - Match the existing Blade/Bootstrap style already in the views.
 - Keep new routes in `routes/web.php` consistent with the surrounding style.
-- When touching the `animals` table, update the migration **and** check every model
-  that maps to it (`Pet`, `Admin`, `GoogleMap`).
+- When touching the `animals` table, update the migration **and** check
+  `app/Models/Animal.php`'s `$fillable` and every controller that uses it
+  (`PetController`, `AdminController`, `GoogleMapController`).
 - Do not commit `.env`, `/vendor`, or `/node_modules` (already in `.gitignore`).
 - Add validation to any controller action that writes user input to the database.
