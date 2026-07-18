@@ -14,7 +14,15 @@
 - โครงสร้างเอกสาร `docs/` 6 หมวด (plans, features, guides, deployment, security, reports)
   พร้อมสารบัญ `docs/README.md`
 - Project skill สำหรับ Claude Code: `.claude/skills/laravel-dev/SKILL.md`
-- Docker support: `Dockerfile`, `docker-compose.yml`, config ของ nginx / php / mysql
+- Docker stack ครบ 3 services (nginx + php-fpm + mysql) + `.dockerignore`
+- ฐานข้อมูล 2 ชุด `paw-track-dev` / `paw-track-prod` ผ่าน `mysql-config/init/01-create-databases.sql`
+- `UserSeeder` — สร้าง admin เริ่มต้น (`admin@pawtrack.test` / `password`)
+
+### Fixed (Docker)
+- ใช้ **PHP 8.0** แทน 8.1 — แก้ปัญหา Laravel 8 แปลง deprecation เป็น fatal ตอน boot บน PHP 8.1
+- เปลี่ยน app image เป็น php-fpm ให้ตรงกับ nginx fastcgi + `composer install` ใน image
+- host port ของ nginx/db เป็น **auto** (กันชนกับ MySQL/แอปอื่นบนเครื่อง) — override ได้ผ่าน
+  `APP_FORWARD_PORT` / `DB_FORWARD_PORT` ใน `.env`
 
 ### Known issues
 ดูรายละเอียดทั้งหมดใน [`docs/reports/2026-07-18-code-review.md`](docs/reports/2026-07-18-code-review.md) — สรุปที่ควรแก้:

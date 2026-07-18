@@ -72,11 +72,12 @@
 ## 🟣 Phase 5: ยกระดับโครงสร้าง (Infra & Upgrade) 💡
 เป้าหมาย: ความยั่งยืนระยะยาว
 
-- [ ] วางแผนอัปเกรด Laravel 8 (หมด support) → เวอร์ชันที่ยัง support
+- [ ] วางแผนอัปเกรด Laravel 8 (หมด support) → เวอร์ชันที่ยัง support (จะปลดล็อกให้ใช้ PHP 8.1+ ได้)
 - [ ] เปลี่ยน `minimum-stability` จาก `dev` เป็น `stable`
 - [ ] เพิ่มเทสต์จริง (Feature test สำหรับหน้า public + admin)
 - [ ] แยกตาราง `map_locations` ออกจาก `animals` ให้ชัดเจน
-- [ ] ตั้งค่า database service ใน `docker-compose.yml` (ตอนนี้มีแต่ app)
+- [x] ~~ตั้งค่า database service ใน `docker-compose.yml`~~ ✅ ทำแล้ว — nginx + php-fpm(8.0) + mysql
+      ครบ, สร้าง `paw-track-dev`/`paw-track-prod`, migrate + seed user (ดู [../deployment/docker.md](../deployment/docker.md))
 
 ---
 

@@ -20,8 +20,19 @@
 | `/password/*` | รีเซ็ตรหัสผ่าน |
 | `/home` | หน้าหลังล็อกอิน (`->name('home')`) |
 
+## ผู้ใช้เริ่มต้น (UserSeeder)
+
+`database/seeders/UserSeeder.php` สร้าง admin เริ่มต้น (รันตอน `artisan migrate --seed` / `db:seed`):
+
+| Email | Password |
+| --- | --- |
+| `admin@pawtrack.test` | `password` |
+
+seeder ใช้ `updateOrCreate` จึง idempotent (รันซ้ำไม่สร้างซ้ำ)
+
 ## ข้อควรปรับปรุง
 
 - [ ] ใช้ระบบ auth นี้ป้องกันหน้า admin (ดู [admin-panel.md](admin-panel.md))
 - [ ] แยก role (admin vs user) หากต้องจำกัดสิทธิ์
 - [ ] ตั้งค่า email (SMTP) ให้ verify/reset ใช้งานได้จริง
+- [ ] เปลี่ยนรหัส admin เริ่มต้นก่อนใช้งานจริง

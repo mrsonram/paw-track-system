@@ -24,12 +24,12 @@ cp .env.example .env
 php artisan key:generate
 
 # 3) แก้ค่าฐานข้อมูลใน .env
-#    DB_DATABASE=pawtrack
+#    DB_DATABASE=paw-track-dev
 #    DB_USERNAME=root
 #    DB_PASSWORD=<รหัสของคุณ>
 
-# 4) สร้างฐานข้อมูลชื่อ pawtrack ใน MySQL แล้ว migrate
-php artisan migrate
+# 4) สร้างฐานข้อมูลชื่อ paw-track-dev ใน MySQL แล้ว migrate + seed user เริ่มต้น
+php artisan migrate --seed
 
 # 5) build assets
 npm run dev
@@ -40,8 +40,11 @@ php artisan serve
 
 เปิด http://localhost:8000
 
+> วิธีที่ง่ายกว่า (ไม่ต้องลง PHP/MySQL บนเครื่อง): รันผ่าน Docker — ดู [../deployment/docker.md](../deployment/docker.md)
+
 ## หมายเหตุ
 
+- ผู้ใช้เริ่มต้นหลัง seed: **`admin@pawtrack.test`** / รหัส **`password`**
 - หน้าแผนที่ต้องใส่ **Google Maps API Key** ใน Blade view จึงจะแสดงแผนที่ได้
 - ถ้า assets ไม่อัปเดต ให้รัน `npm run watch` ค้างไว้ระหว่างพัฒนา
 - ปัญหาสิทธิ์ storage: `php artisan storage:link` และตรวจสิทธิ์โฟลเดอร์ `storage/`
