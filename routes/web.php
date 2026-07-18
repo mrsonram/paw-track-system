@@ -2,11 +2,7 @@
 
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PetController;
-use App\Http\Controllers\TesterController;
-use App\Http\Controllers\AutoAddressController;
-use App\Models\Pet;
 use Illuminate\Support\Facades\Route;
-use Symfony\Component\Console\Input\Input;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,14 +15,7 @@ use Symfony\Component\Console\Input\Input;
 |
 */
 
-//Route::get('/', function () {
-//    return view('welcome');
-//});
-
 Route::get('/', 'PetController@index');
-
-//VRU VET Project 2021
-Route::resource('/', 'PetController');
 
 Route::get('info', [PetController::class, 'info']);
 
@@ -46,7 +35,7 @@ Route::get('/about', function () {
 Route::resource('dog', 'AdminController');
 
 //Contact
-Route::resource('contact', 'ContactController');
+Route::resource('contact', 'ContactController')->only(['index', 'store', 'show', 'destroy']);
 
 //News
 Route::resource('message', 'NewsController');
