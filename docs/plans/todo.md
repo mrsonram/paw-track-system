@@ -49,7 +49,13 @@
 - [x] เลิกใช้ `$request->all()` → ใช้ `$request->only([...])` หรือ validated data
 - [x] ตรวจว่า `.env` (มี `APP_KEY`/รหัส DB) ไม่ถูก track ใน git (`git ls-files .env` → not tracked, ผ่าน)
 - [x] จำกัดสิทธิ์เข้าถึงหน้า admin ด้วย middleware `auth` — เพิ่มให้ `google/add` (GET+POST) ที่เดิมเปิดสาธารณะทั้งหมด (`dog`/`message`/`contact` มีอยู่แล้ว)
-- [ ] จำกัดสิทธิ์ Google Maps API key (HTTP referrer) + ย้ายไปอ่านจาก config/env — **ยังไม่ทำ**, ต้องตั้งค่าใน Google Cloud Console (นอกเหนือจากโค้ด)
+- [x] ย้าย Google Maps API key ไปอ่านจาก config/env แทน hardcode ใน Blade — เพิ่ม
+  `config('services.google_maps.key')` (`GOOGLE_MAPS_API_KEY` ใน `.env`/`.env.example`),
+  แก้ 4 ไฟล์ view ที่เคย hardcode key (`theme/mdb`, `pet/map`, `google/app`, `google/view`)
+  ทดสอบแล้วว่า key ยัง render ถูกต้อง + เทสต์ 41 ตัวผ่านหมด
+- [ ] จำกัดสิทธิ์ Google Maps API key ด้วย HTTP referrer restriction — **ยังไม่ทำ**,
+  ต้องตั้งค่าใน Google Cloud Console โดยเจ้าของบัญชีที่ออก key (นอกเหนือจากโค้ด) —
+  ดูขั้นตอนใน [../security/recommendations.md](../security/recommendations.md#4-google-maps-api-key-)
 - [x] **แก้แล้ว**: `GoogleMapController@add/@store` เคย insert พังด้วย SQL error เพราะฟอร์มไม่กรอกคอลัมน์ NOT NULL อื่น ๆ ของ `animals` — เพิ่ม migration `2026_07_18_000000_make_animal_profile_columns_nullable` ทำให้คอลัมน์ที่ไม่เกี่ยวกับ map pin (species/marking/gender/collar/age/status/vet/owner/image/location) เป็น nullable, เหลือแค่ `name`/`lat`/`lng` ที่ required ระดับ DB ทดสอบแล้วว่า insert ผ่านจริง
 
 ## 🟡 Phase 3: เก็บกวาดโค้ด (Cleanup) 🔧
