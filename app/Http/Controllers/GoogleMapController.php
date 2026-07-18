@@ -26,7 +26,7 @@ class GoogleMapController extends Controller
             $feaures['type'] = 'Feature';
             $geometry = array("type" => "Point", "coordinates" => [$value->lng, $value->lat]);
             $feaures['geometry'] = $geometry;
-            $properties = array('name' => $value->title, "city" => $value->description);
+            $properties = array('name' => $value->name, "location" => $value->location);
             $feaures['properties'] = $properties;
             array_push($dataMap['features'], $feaures);
         }
@@ -53,7 +53,7 @@ class GoogleMapController extends Controller
     {
 
         GoogleMap::create($request->all());
-        return redirect('/maps')->with('success', "Add map success!");
+        return redirect('/map')->with('success', "Add map success!");
     }
 
     public function add(Request $request)

@@ -11,7 +11,7 @@ class Contact extends Model
     public $timestamps = false;
 
     protected $table = 'contacts';
-    protected $fillbale = ['name', 'email', 'title', 'message'];
+    protected $fillable = ['name', 'email', 'title', 'message'];
     protected $primaryKey = 'id';
     protected $hidden;
 }
