@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Animal;
+use App\Models\Contact;
+use App\Models\News;
 
 class HomeController extends Controller
 {
@@ -23,6 +26,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('admin/home');
+        $stats = [
+            'total_dogs' => Animal::whereNotNull('status')->count(),
+            'alive_dogs' => Animal::where('status', 'มีชีวิตอยู่')->count(),
+            'deceased_dogs' => Animal::where('status', 'เสียชีวิตแล้ว')->count(),
+            'news_count' => News::count(),
+            'contact_count' => Contact::count(),
+        ];
+
+        return view('admin/home', compact('stats'));
     }
 }
