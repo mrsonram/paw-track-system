@@ -32,7 +32,10 @@ services:
     container_name: pawtrack-nginx
     restart: unless-stopped
     ports:
-      - "8000:80"                             # เปิดแอปที่ http://localhost:8000
+      # host port 0 = Docker เลือก port ว่างอัตโนมัติ (กันชนกับแอปอื่นบนเครื่อง)
+      # อยากปักหมุด: ตั้ง APP_FORWARD_PORT=8000 ใน .env
+      # ดู URL จริง:  docker compose port nginx 80
+      - "${APP_FORWARD_PORT:-0}:80"
     volumes:
       - ./:/var/www/html
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
@@ -49,10 +52,14 @@ services:
       MYSQL_DATABASE: ${DB_DATABASE:-pawtrack}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-pawtrack}
     ports:
-      - "3306:3306"                           # เชื่อมจาก host ได้ (เช่น DBeaver)
+      # host port 0 = ให้ Docker เลือก port ว่างอัตโนมัติ (กันชนกับ MySQL อื่นบนเครื่อง)
+      # อยากปักหมุดเอง: ตั้ง DB_FORWARD_PORT=3308 ใน .env
+      # ดู port จริงที่ได้:  docker compose port db 3306
+      - "${DB_FORWARD_PORT:-0}:3306"
     volumes:
       - dbdata:/var/lib/mysql
       - ./mysql-config/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./mysql-config/init:/docker-entrypoint-initdb.d   # สร้าง paw-track-dev + paw-track-prod ตอน init
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD:-pawtrack}"]
       interval: 10s

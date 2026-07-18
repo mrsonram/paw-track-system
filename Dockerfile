@@ -1,5 +1,7 @@
 # PawTrack — PHP-FPM image (served by the nginx service via fastcgi)
-FROM php:8.1-fpm
+# ใช้ PHP 8.0 ให้ตรงกับที่ Laravel 8.40 + composer.lock รองรับ (prophecy ต้องการ php <8.1)
+# PHP 8.1 ทำให้ Laravel 8 แปลง deprecation เป็น fatal ระหว่างโหลด class → boot ไม่ขึ้น
+FROM php:8.0-fpm
 
 # Set the working directory
 WORKDIR /var/www/html
@@ -28,7 +30,9 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install PHP dependencies first (better layer caching)
-# --no-scripts skips artisan package:discover which needs a full app + .env
+# ติดตั้ง dev deps ด้วย เพราะ bootstrap/cache/packages.php อ้าง provider ของ
+#   dev packages (ignition, sail, collision, crud-generator)
+# --no-scripts: ข้าม artisan package:discover ที่ต้องมีแอปครบ + .env
 COPY composer.json composer.lock ./
 RUN composer install --no-scripts --no-interaction --prefer-dist
 
