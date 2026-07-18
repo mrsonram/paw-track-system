@@ -1,10 +1,10 @@
-# Use the official PHP image as a parent image
+# PawTrack — PHP-FPM image (served by the nginx service via fastcgi)
 FROM php:8.1-fpm
 
 # Set the working directory
 WORKDIR /var/www/html
 
-# Install dependencies
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpng-dev \
@@ -20,23 +20,22 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     libzip-dev \
-    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl
-
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl gd \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy the existing application directory contents
-COPY . /var/www/html
+# Install PHP dependencies first (better layer caching)
+# --no-scripts skips artisan package:discover which needs a full app + .env
+COPY composer.json composer.lock ./
+RUN composer install --no-scripts --no-interaction --prefer-dist
 
-# Copy the existing application directory permissions
-COPY --chown=www-data:www-data . /var/www/html
+# Copy the rest of the application and rebuild the optimized autoloader
+COPY . .
+RUN composer dump-autoload --optimize --no-scripts
 
-# Change current user to www
-USER www-data
-
-# Expose port 8000 and start the built-in PHP server
-EXPOSE 8000
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+# php-fpm listens on 9000 (consumed by the nginx service, not published to host)
+EXPOSE 9000
+CMD ["php-fpm"]
