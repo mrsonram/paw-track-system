@@ -11,7 +11,7 @@
 | --- | --- | --- |
 | 0 | เปลี่ยนชื่อโปรเจค + จัดเอกสาร | ✅ เสร็จ |
 | 1 | แก้บั๊ก/ความถูกต้อง (Correctness) | ✅ เสร็จ |
-| 2 | ความปลอดภัย (Security & Validation) | ❌ ยังไม่เริ่ม |
+| 2 | ความปลอดภัย (Security & Validation) | 🔧 กำลังทำ |
 | 3 | เก็บกวาดโค้ด (Cleanup) | ❌ ยังไม่เริ่ม |
 | 4 | ต่อยอดฟีเจอร์ (Feature Enhancements) | 💡 พิจารณา |
 | 5 | ยกระดับโครงสร้าง (Infra & Upgrade) | 💡 พิจารณา |
@@ -38,18 +38,19 @@
 - [x] ทดสอบ flow: หน้าแรก, รายละเอียดสุนัข, ข่าว, แผนที่, ส่งฟอร์มติดต่อ, admin CRUD (ผ่าน docker stack ทั้งหมด)
 - [x] **พบเพิ่มระหว่างทดสอบ**: `ContactController` ครอบ `auth` middleware ทั้ง controller ทำให้ผู้เยี่ยมชมส่งฟอร์มติดต่อไม่ได้ — แก้เป็น `->except(['create', 'store'])`
 
-## 🟠 Phase 2: ความปลอดภัย (Security & Validation) ❌
+## 🟠 Phase 2: ความปลอดภัย (Security & Validation) 🔧
 เป้าหมาย: ปิดช่องโหว่พื้นฐาน — ดู [../security/recommendations.md](../security/recommendations.md)
 
-- [ ] เพิ่ม `$request->validate([...])` ในทุก action ที่บันทึกข้อมูล
-  - [ ] `GoogleMapController@add`, `@store`
-  - [ ] `ContactController@store`
-  - [ ] `AdminController` (dog CRUD)
-  - [ ] `NewsController`
-- [ ] เลิกใช้ `$request->all()` → ใช้ `$request->only([...])` หรือ validated data
-- [ ] ตรวจว่า `.env` (มี `APP_KEY`/รหัส DB) ไม่ถูก track ใน git (`git ls-files .env`)
-- [ ] จำกัดสิทธิ์ Google Maps API key (HTTP referrer) + ย้ายไปอ่านจาก config/env
-- [ ] จำกัดสิทธิ์เข้าถึงหน้า admin ด้วย middleware `auth` (และ role ถ้ามี)
+- [x] เพิ่ม `$request->validate([...])` ในทุก action ที่บันทึกข้อมูล
+  - [x] `GoogleMapController@add`, `@store`
+  - [x] `ContactController@store` (มีอยู่แล้วจากก่อนหน้านี้)
+  - [x] `AdminController` (dog CRUD: store/update)
+  - [x] `NewsController` (store/update)
+- [x] เลิกใช้ `$request->all()` → ใช้ `$request->only([...])` หรือ validated data
+- [x] ตรวจว่า `.env` (มี `APP_KEY`/รหัส DB) ไม่ถูก track ใน git (`git ls-files .env` → not tracked, ผ่าน)
+- [x] จำกัดสิทธิ์เข้าถึงหน้า admin ด้วย middleware `auth` — เพิ่มให้ `google/add` (GET+POST) ที่เดิมเปิดสาธารณะทั้งหมด (`dog`/`message`/`contact` มีอยู่แล้ว)
+- [ ] จำกัดสิทธิ์ Google Maps API key (HTTP referrer) + ย้ายไปอ่านจาก config/env — **ยังไม่ทำ**, ต้องตั้งค่าใน Google Cloud Console (นอกเหนือจากโค้ด)
+- [ ] **พบเพิ่มระหว่างทดสอบ**: `GoogleMapController@add/@store` ยัง insert พังด้วย SQL error เพราะฟอร์มไม่กรอกคอลัมน์ NOT NULL อื่น ๆ ของ `animals` (species, gender, ฯลฯ) — บันทึกเป็นข้อจำกัดที่รู้ไว้ก่อน ไม่แก้ในรอบนี้
 
 ## 🟡 Phase 3: เก็บกวาดโค้ด (Cleanup) ❌
 เป้าหมาย: ลดหนี้ทางเทคนิค อ่านโค้ดง่ายขึ้น
@@ -82,7 +83,7 @@
 
 ---
 
-**สถานะปัจจุบัน**: Phase 0-1 เสร็จแล้ว — พร้อมเริ่ม Phase 2 (validation + ป้องกัน admin) ต่อทันที
+**สถานะปัจจุบัน**: Phase 0-1 เสร็จแล้ว, Phase 2 เกือบเสร็จ (เหลือแค่จำกัดสิทธิ์ Google Maps API key) — พร้อมเริ่ม Phase 3 (เก็บกวาดโค้ด) ต่อได้
 **เอกสารอ้างอิง**:
 - แผนแก้เร่งด่วน: [action-plan-2026-07-18.md](action-plan-2026-07-18.md)
 - ผลรีวิว: [../reports/2026-07-18-code-review.md](../reports/2026-07-18-code-review.md)

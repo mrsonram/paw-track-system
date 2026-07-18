@@ -11,7 +11,7 @@
 | --- | --- | --- |
 | 0 | เปลี่ยนชื่อโปรเจค + จัดเอกสาร | ✅ เสร็จ |
 | 1 | แก้บั๊กความถูกต้อง | ✅ เสร็จ |
-| 2 | เพิ่ม validation + ป้องกัน admin | ❌ ยังไม่เริ่ม |
+| 2 | เพิ่ม validation + ป้องกัน admin | ✅ เสร็จ |
 | 3 | เก็บกวาดโค้ด | ❌ ยังไม่เริ่ม |
 
 ## Phase 0: เปลี่ยนชื่อ + เอกสาร ✅
@@ -26,12 +26,14 @@
 4. [x] ทดสอบ: หน้าแรก / รายละเอียดสุนัข / ข่าว / แผนที่ / ส่งฟอร์มติดต่อ / admin CRUD (ผ่านทุกอย่างผ่าน docker stack)
 5. [x] **พบเพิ่ม**: `ContactController` ครอบ `auth` middleware ทั้ง controller ทำให้ผู้เยี่ยมชมทั่วไปส่งฟอร์มติดต่อไม่ได้ (เด้งไป `/login`) — แก้เป็น `->except(['create', 'store'])` เพื่อให้ฟอร์มสาธารณะใช้งานได้ ตามเกณฑ์ DoD ข้อแรก
 
-## Phase 2: validation + ป้องกัน admin ❌
-1. [ ] เพิ่ม `$request->validate([...])` ใน `ContactController@store`
-2. [ ] เพิ่ม validation ใน `GoogleMapController@add/@store`
-3. [ ] เพิ่ม validation ใน `AdminController` (dog CRUD) และ `NewsController`
-4. [ ] ครอบ route admin ด้วย `Route::middleware('auth')->group(...)`
-5. [ ] ตรวจ `.env` ไม่ถูก track (`git ls-files --error-unmatch .env`)
+## Phase 2: validation + ป้องกัน admin ✅
+1. [x] `ContactController@store` มี `$request->validate([...])` อยู่แล้ว (ตรวจสอบแล้ว ไม่ต้องแก้)
+2. [x] เพิ่ม validation ใน `GoogleMapController@add/@store` (name/lat/lng) และเปลี่ยนจาก `$request->all()` เป็นค่าที่ validate แล้ว
+3. [x] เพิ่ม validation ใน `AdminController` (dog CRUD: store/update) และ `NewsController` (store/update); เปลี่ยนจาก `$request->all()` เป็น `$request->only([...])`
+   - หมายเหตุ: `image` เป็น `required` ตอน `store` (คอลัมน์ `animals.image` เป็น NOT NULL ไม่มี default — ก่อนหน้านี้ถ้าไม่แนบรูปจะพัง 500), เป็น `nullable` ตอน `update`
+4. [x] ครอบ route admin ด้วย `Route::middleware('auth')->group(...)` — ใช้กับ `google/add` (GET+POST) ที่เดิมเปิดสาธารณะทั้งหมด ส่วน `dog`/`message`/`contact` มี `$this->middleware('auth')` ที่ controller อยู่แล้วจาก Phase ก่อน
+5. [x] ตรวจ `.env` ไม่ถูก track (`git ls-files --error-unmatch .env` → not tracked, ผ่าน)
+6. [x] **พบเพิ่มระหว่างทดสอบ**: `GoogleMapController@add/@store` ยังคง insert พังด้วย SQL error เพราะฟอร์มไม่ได้กรอกคอลัมน์ NOT NULL อื่น ๆ ของตาราง `animals` (species, gender, ฯลฯ) — ตัดสินใจร่วมกับผู้ใช้ให้ **บันทึกไว้เป็นข้อจำกัดที่รู้ (known limitation)** สำหรับ phase ถัดไป ไม่แก้ตอนนี้
 
 ## Phase 3: เก็บกวาดโค้ด ❌
 1. [ ] ลบ `use Symfony\Component\Console\Input\Input;` ใน `routes/web.php`
@@ -42,6 +44,6 @@
 ## เกณฑ์ถือว่าเสร็จ (Definition of Done)
 - [x] ส่งฟอร์มติดต่อแล้วบันทึกลง DB ได้จริง
 - [x] หน้าแผนที่แสดงข้อมูลถูกต้อง ไม่ 404 หลังบันทึก
-- [ ] ทุก action ที่บันทึกข้อมูลมี validation (Phase 2)
-- [ ] หน้า admin เข้าถึงได้เฉพาะผู้ล็อกอิน (Phase 2 — ตรวจ middleware ที่เหลือ)
+- [x] ทุก action ที่บันทึกข้อมูลมี validation
+- [x] หน้า admin เข้าถึงได้เฉพาะผู้ล็อกอิน
 - [x] `php artisan test` ผ่าน
