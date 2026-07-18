@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Admin;
+use App\Models\Animal;
 
 class AdminController extends Controller
 {
@@ -22,7 +22,7 @@ class AdminController extends Controller
         $q = $request->input('q');
 
         if (!empty($q)) {
-            $animals = Admin::where("name", "like", "%{$q}%")
+            $animals = Animal::where("name", "like", "%{$q}%")
                 ->orWhere("type", "like", "%{$q}%")
                 ->orWhere("species", "like", "%{$q}%")
                 ->orWhere("marking", "like", "%{$q}%")
@@ -37,7 +37,7 @@ class AdminController extends Controller
         }
 
         else {
-            $animals = Admin::get()
+            $animals = Animal::get()
                 ->sortBy("name");
         }
 
@@ -51,7 +51,7 @@ class AdminController extends Controller
      */
     public function create()
     {
-        $animals = Admin::get();
+        $animals = Animal::get();
 
         return view('admin/dogs/create', compact('animals'));
     }
@@ -86,7 +86,7 @@ class AdminController extends Controller
         ]);
         $requestData['image'] = $request->file('image')->store('images', 'public');
 
-        Admin::create($requestData);
+        Animal::create($requestData);
 
         return redirect('dog')->with('flash_message', 'Book added!');
     }
@@ -99,7 +99,7 @@ class AdminController extends Controller
      */
     public function show($id)
     {
-        $animals = Admin::findOrFail($id);
+        $animals = Animal::findOrFail($id);
 
         return view('admin/dogs/show', compact('animals'));
     }
@@ -112,7 +112,7 @@ class AdminController extends Controller
      */
     public function edit($id)
     {
-        $animals = Admin::findOrFail($id);
+        $animals = Animal::findOrFail($id);
 
         return view('admin/dogs/edit', compact('animals'));
     }
@@ -151,7 +151,7 @@ class AdminController extends Controller
             $requestData['image'] = $request->file('image')->store('images', 'public');
         }
 
-        $animals = Admin::findOrFail($id);
+        $animals = Animal::findOrFail($id);
         $animals->update($requestData);
 
         return redirect('dog')->with('ข้อความ', 'อัพเดตข้อมูลแล้ว');
@@ -165,7 +165,7 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-        Admin::destroy($id);
+        Animal::destroy($id);
 
         return redirect('dog');
     }

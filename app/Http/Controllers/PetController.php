@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pet;
+use App\Models\Animal;
 use App\Models\News;
 
 class PetController extends Controller
@@ -14,13 +14,13 @@ class PetController extends Controller
      */
     public function index()
     {
-        $animals = Pet::get();
+        $animals = Animal::get();
         return view('pet/index', compact('animals'));
     }
 
     public function info()
     {
-        $animals = Pet::get()
+        $animals = Animal::get()
                         ->sortBy("name");
         return view('pet/info', compact('animals'));
     }
@@ -33,7 +33,7 @@ class PetController extends Controller
 
     public function map()
     {
-        $animals = Pet::get();
+        $animals = Animal::get();
         return view('pet/map', compact('animals'));
     }
 
@@ -45,7 +45,7 @@ class PetController extends Controller
      */
     public function show($id)
     {
-        $animals = Pet::findOrFail($id);
+        $animals = Animal::findOrFail($id);
 
         return view('pet/show')->with([
             'data' => $animals

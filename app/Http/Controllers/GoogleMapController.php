@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\GoogleMap;
+use App\Models\Animal;
 
 class GoogleMapController extends Controller
 {
@@ -26,7 +26,7 @@ class GoogleMapController extends Controller
             'lng' => 'required|numeric',
         ]);
 
-        GoogleMap::create($validated);
+        Animal::create($validated);
         return redirect('/map')->with('success', "Add map success!");
     }
 
@@ -38,7 +38,7 @@ class GoogleMapController extends Controller
             'lng' => 'required|numeric',
         ]);
 
-        GoogleMap::create($validated);
+        Animal::create($validated);
         return redirect('/google/add')->with('success', "Add map success!");
     }
 
@@ -50,7 +50,7 @@ class GoogleMapController extends Controller
      */
     public function show($id)
     {
-        $animals = GoogleMap::find($id);
+        $animals = Animal::find($id);
         return view('google/view', compact('animals'));
     }
 }
