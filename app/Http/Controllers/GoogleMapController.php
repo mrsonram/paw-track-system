@@ -18,20 +18,19 @@ class GoogleMapController extends Controller
     {
         $maps = GoogleMap::all();
 
-        $dataMap  = Array();
-        $dataMap['type']='FeatureCollection';
-        $dataMap['features']=array();
-        foreach($maps as $value){
-                $feaures = array();
-                $feaures['type']='Feature';
-                $geometry = array("type"=>"Point","coordinates"=>[$value->lng, $value->lat]);
-                $feaures['geometry']=$geometry;
-                $properties=array('name'=>$value->title,"city"=>$value->description);
-                $feaures['properties']= $properties;
-                array_push($dataMap['features'],$feaures);
-
-       }
-        return view('pages/google-map')->with('dataArray',json_encode($dataMap));
+        $dataMap  = array();
+        $dataMap['type'] = 'FeatureCollection';
+        $dataMap['features'] = array();
+        foreach ($maps as $value) {
+            $feaures = array();
+            $feaures['type'] = 'Feature';
+            $geometry = array("type" => "Point", "coordinates" => [$value->lng, $value->lat]);
+            $feaures['geometry'] = $geometry;
+            $properties = array('name' => $value->title, "city" => $value->description);
+            $feaures['properties'] = $properties;
+            array_push($dataMap['features'], $feaures);
+        }
+        return view('pages/google-map')->with('dataArray', json_encode($dataMap));
     }
 
     /**
@@ -54,13 +53,13 @@ class GoogleMapController extends Controller
     {
 
         GoogleMap::create($request->all());
-        return redirect('/maps')->with('success',"Add map success!");
+        return redirect('/maps')->with('success', "Add map success!");
     }
 
     public function add(Request $request)
     {
         GoogleMap::create($request->all());
-        return redirect('/google/add')->with('success',"Add map success!");
+        return redirect('/google/add')->with('success', "Add map success!");
     }
 
     /**
