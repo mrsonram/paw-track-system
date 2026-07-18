@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "97f07b4efd2332a4a2e30d2f4f80ab3b",
+    "content-hash": "51e8b12203d751e5174571c2e7c9eb75",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1503,12 +1503,12 @@
             "version": "2.49.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/briannesbitt/Carbon.git",
+                "url": "https://github.com/CarbonPHP/carbon.git",
                 "reference": "93d9db91c0235c486875d22f1e08b50bdf3e6eee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/93d9db91c0235c486875d22f1e08b50bdf3e6eee",
+                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/93d9db91c0235c486875d22f1e08b50bdf3e6eee",
                 "reference": "93d9db91c0235c486875d22f1e08b50bdf3e6eee",
                 "shasum": ""
             },
@@ -4894,12 +4894,12 @@
             "version": "v3.2.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/appzcoder/crud-generator.git",
+                "url": "https://github.com/sohelamin/crud-generator.git",
                 "reference": "662840d2e69d1523bd19fafb8402d3dc52293e9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/appzcoder/crud-generator/zipball/662840d2e69d1523bd19fafb8402d3dc52293e9d",
+                "url": "https://api.github.com/repos/sohelamin/crud-generator/zipball/662840d2e69d1523bd19fafb8402d3dc52293e9d",
                 "reference": "662840d2e69d1523bd19fafb8402d3dc52293e9d",
                 "shasum": ""
             },
@@ -7529,13 +7529,13 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
-    "stability-flags": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^7.3|^8.0"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }
